@@ -53,7 +53,7 @@ Notes
 - Templating: if `jinja2` is installed the runner will render action params and messages with Jinja2 (you get `vars`, `last_match_score`, `attempts` in the template context). Otherwise a simple `{{ name }}` string replacement is used.
 - Native clicks use `pyautogui` and require a desktop session. On Linux `pygetwindow` is used for window geometry when available, otherwise the runner falls back to `xdotool` or full-screen origin.
 
-If you'd like, I can add a `reload_vars` cron-style example or show a sample full automation YAML for the Google example.
+
 
 Release
 -------
