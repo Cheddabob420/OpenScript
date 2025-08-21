@@ -1,0 +1,104 @@
+# Automation template for build_zone/main.py (and future automation runners)
+# Use this as a base to describe: target (window/program/URL), actions to perform
+# when conditions are met, and exit condition(s).
+#
+# Supported top-level fields:
+# - id: optional human id for this automation
+# - description: short description
+# - target: how to find the application/window/page to inspect
+#     type: one of [url, window_title, process_name, selector]
+#     value: string used together with the type
+#     capture_method: one of [screenshot, dom, element_screenshot]
+# - polling: how often to check (seconds) and max attempts / timeout
+# - actions: ordered list of action blocks. Each action has:
+#     name: short id
+#     type: one of [detect_image, click_selector, run_command, notify, screenshot, keystroke, sleep]
+#     params: action-specific parameters (see examples below)
+#     when: condition describing when to run this action. Conditions can reference
+#           detection results, counters, or time-based checks.
+# - exit: condition(s) when automation stops and optional final action
+#
+# Notes on conditions:
+# - Conditions are expressed as small predicates using keys available in the
+#   runtime context: last_match_score, attempts, elapsed_seconds, target_found (bool)
+# - You can use simple operators (>, <, ==) in a string expression. The runner
+#   will evaluate them (future feature). For now, write clear conditions and we
+#   can extend the runner to parse them.
+
+id: example-automation-01
+description: "Look for a program/window or URL and take configured actions when the target is found or not found"
+
+target:
+  # type: url | window_title | process_name | selector
+  type: url
+  value: "https://www.google.com"
+  # capture_method: screenshot (full-page), dom (use DOM heuristics), element_screenshot (specific element)
+  capture_method: screenshot
+
+polling:
+  interval_seconds: 10     # check every 10 seconds
+  max_attempts: 12        # stop after 12 attempts (120 seconds)
+  timeout_seconds: 300    # alternative: overall timeout
+
+# Actions are evaluated in order each polling cycle when their 'when' condition is true.
+actions:
+  - name: detect_google_logo
+    type: detect_image
+    params:
+      template_path: build_zone/data/google_logo.png
+      threshold: 0.78
+      scales: [0.6, 0.8, 1.0, 1.2]
+      save_detected_annotated: true
+      annotated_path: build_zone/data/google_annotated.png
+    # run this detect every cycle
+    when: "true"
+
+  - name: notify_on_detect
+    type: notify
+    params:
+      title: "Google logo found"
+      message: "Detected with score {{ last_match_score }}"
+    # only run when detection succeeded
+    when: "last_match_score >= 0.78"
+
+  - name: browser_alert_on_detect
+    type: run_command
+    params:
+      # send a small JS alert using Selenium runner's execute_script helper
+      command: "alert('Detected Google logo by automation');"
+    when: "last_match_score >= 0.78"
+
+  - name: fallback_capture
+    type: run_command
+    params:
+      # if not found, save a screenshot for debugging
+      command: "python -c \"print('placeholder for custom command')\""
+    when: "last_match_score < 0.78"
+
+# Exit conditions: when to stop the automation loop
+exit:
+  # stop after a successful detection
+  on_success:
+    condition: "last_match_score >= 0.78"
+    action:
+      type: notify
+      params:
+        title: "Automation finished"
+        message: "Target detected; stopping automation"
+  # or stop after max attempts
+  on_timeout:
+    condition: "attempts >= polling.max_attempts"
+    action:
+      type: notify
+      params:
+        title: "Automation timeout"
+        message: "Target not detected within max attempts"
+
+# Example alternative workflow: detect something in a local app window by title
+# - set target.type: window_title
+# - set target.value: the expected window title substring
+# - use detect_image pointing at a saved template
+
+# Tip: keep templates in 'build_zone/data' and reference them by that relative path.
+# This template is intentionally descriptive; when you want, I can implement a
+# parser/runner for these fields in main.py so the YAML is executed directly.

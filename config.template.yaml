@@ -1,0 +1,33 @@
+# Example config for build_zone/main.py
+# Use this file as a starting point and run with --config myconfig.yaml
+
+# URL to open
+url: https://www.google.com
+
+# Whether to run the browser headless
+headless: false
+
+# When to run setup (create template) automatically. Options: never, always, if_missing
+auto_setup: if_missing
+
+# Template and screenshot paths (relative to repo root)
+screenshot: build_zone/data/google.png
+template: build_zone/data/google_logo.png
+annotated: build_zone/data/google_annotated.png
+
+# Selector(s) to find the logo for DOM-based capture. A list of CSS selectors tried in order.
+selectors:
+  - 'img[alt="Google"]'
+  - 'img#hplogo'
+  - 'div#lga img'
+
+# Matching options
+threshold: 0.78
+scales: [0.5, 0.6, 0.75, 1.0, 1.25, 1.5]
+
+# Optional: whether to save driver profile permanently (false uses a temp profile)
+persist_profile: false
+
+# Optional commands to run on success or failure (shell commands)
+on_detect_success: 'notify-send "Logo detected"'
+on_detect_failure: ''

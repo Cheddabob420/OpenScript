@@ -1,0 +1,27 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+build/
+dist/
+*.egg-info/
+.openscript-*.tar.gz
+openscript-*.tar.gz
+openscript-*.zip
+*.egg
+*.log
+.pytest_cache/
+.vscode/
+.idea/
+.DS_Store
+*.bak
+# Editors
+*~
+
+# system
+/.venv
+/pyvenv.cfg

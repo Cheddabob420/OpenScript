@@ -1,0 +1,38 @@
+# Example automation: detect saved template and click it natively
+id: example_google_click
+description: Detect a saved template and click it natively
+target:
+  type: window_title
+  value: "Google"
+  capture_method: screenshot
+polling:
+  interval_seconds: 5
+  max_attempts: 0
+actions:
+  - name: reload_captured_vars
+    type: reload_vars
+  - name: detect_logo
+    type: detect_image
+    params:
+      template_path: "{{ google_logo }}"
+      threshold: 0.8
+      scales: [1.0, 0.9, 0.8]
+      save_detected_annotated: true
+      annotated_path: build_zone/data/google_annotated.png
+  - name: native_click_logo
+    type: click_image
+    params:
+      template_path: "{{ google_logo }}"
+      click_width: 100
+      click_height: 60
+      native_click: true
+      randomize: true
+exit:
+  on_success:
+    condition: "last_match_score >= 0.8"
+    action:
+      type: notify
+      params:
+        title: "Found"
+        message: "Logo found with score {{ last_match_score }}"
+*** End Patch
