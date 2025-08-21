@@ -9,6 +9,10 @@ env/
 build/
 dist/
 *.egg-info/
+lib/
+lib64/
+include/
+share/
 .openscript-*.tar.gz
 openscript-*.tar.gz
 openscript-*.zip
