@@ -54,3 +54,39 @@ Notes
 - Native clicks use `pyautogui` and require a desktop session. On Linux `pygetwindow` is used for window geometry when available, otherwise the runner falls back to `xdotool` or full-screen origin.
 
 If you'd like, I can add a `reload_vars` cron-style example or show a sample full automation YAML for the Google example.
+
+Release
+-------
+
+A minimal source release and a full release are available in the repository root as:
+
+- `openscript-minimal.tar.gz` (source + scripts, small)
+- `openscript-minimal.zip`
+- `openscript-release.tar.gz` (full packaged runtime — large)
+- `openscript-release.zip`
+
+Git LFS
+-------
+
+This repository was migrated to use Git LFS for large binary blobs (OpenCV and other native extensions). If you had a previous clone prior to the migration you will need to re-clone the repository to avoid history conflicts:
+
+1. Backup any local branches/changes you have.
+2. Re-clone the repository:
+
+```bash
+git clone git@github.com:Cheddabob420/OpenScript.git
+```
+
+Or, to keep the same clone, fetch and reset (ONLY if you know what you're doing):
+
+```bash
+git fetch origin
+git reset --hard origin/main
+```
+
+If you contribute, prefer creating a new branch and opening a PR.
+
+Release assets
+--------------
+
+I uploaded the minimal release artifacts to the GitHub release `v0.1.0`. Tell me if you want the full release archives attached to the release as well (they are large ~160–330 MB).
